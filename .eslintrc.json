@@ -16,6 +16,7 @@
   },
   "ignorePatterns": ["*.spec.js"],
   "rules": {
-    "padded-blocks": ["error", { "classes": "always" }]
+    "padded-blocks": ["error", { "classes": "always" }],
+    "comma-dangle": ["error", "never"]
   }
 }
