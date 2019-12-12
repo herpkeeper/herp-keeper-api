@@ -1,0 +1,19 @@
+{
+  "type": "module",
+  "name": "herp-keeper-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/start.js",
+  "keywords": [],
+  "author": "Scott Guilbeaux <scott@herp-keeper.com>",
+  "license": "ISC",
+  "scripts": {
+    "test": "mocha src/**/*.spec.js --exit --bail"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1"
+  }
+}
