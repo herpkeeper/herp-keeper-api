@@ -4,5 +4,8 @@
   },
   "database": {
     "url": "mongodb://localhost:27017/herp-keeper-test"
+  },
+  "jwt": {
+    "secret": "secret"
   }
 }
