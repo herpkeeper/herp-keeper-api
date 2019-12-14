@@ -151,6 +151,14 @@ describe('ProfileCollection', () => {
     expect(res.active).to.be.false;
     expect(res.foodTypes).to.exist;
     expect(res.foodTypes.length).to.equal(0);
+    expect(res.locations).to.exist;
+    expect(res.locations.length).to.equal(0);
+    expect(res.species).to.exist;
+    expect(res.species.length).to.equal(0);
+    expect(res.animals).to.exist;
+    expect(res.animals.length).to.equal(0);
+    expect(res.images).to.exist;
+    expect(res.images.length).to.equal(0);
   });
 
   it('should fail to update due to profile not found', async () => {

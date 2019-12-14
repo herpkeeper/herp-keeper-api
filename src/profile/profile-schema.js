@@ -6,6 +6,10 @@ const Email = mongoose.SchemaTypes.Email;
 const ObjectId = mongoose.SchemaTypes.ObjectId;
 
 const Logger = require('../logger/logger');
+const locationSchema = require('../location/location-schema');
+const speciesSchema = require('../species/species-schema');
+const animalSchema = require('../animal/animal-schema');
+const imageSchema = require('../image/image-schema');
 
 const log = Logger.getLogger('profile:profile-schema');
 
@@ -58,7 +62,11 @@ const profileSchema = mongoose.Schema({
   activationKey: {
     type: String
   },
-  foodTypes: [String]
+  foodTypes: [String],
+  locations: [locationSchema],
+  species: [speciesSchema],
+  animals: [animalSchema],
+  images: [imageSchema]
 }, { timestamps: true });
 
 profileSchema.pre('save', async function() {
