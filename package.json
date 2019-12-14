@@ -17,11 +17,15 @@
     }
   },
   "dependencies": {
+    "async-redis": "^1.1.7",
+    "bcryptjs": "^2.4.3",
     "es6bindall": "0.0.9",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongoose": "^5.8.0",
+    "mongoose-type-email": "^1.0.11",
+    "redis": "^2.8.0",
     "uuid": "^3.3.3",
     "winston": "^3.2.1",
     "ws": "^7.2.0"
@@ -35,6 +39,7 @@
     "mocha": "^6.2.2",
     "mongodb-memory-server": "^6.0.2",
     "nyc": "^14.1.1",
+    "redis-server": "^1.2.2",
     "sleep-promise": "^8.0.1"
   }
 }

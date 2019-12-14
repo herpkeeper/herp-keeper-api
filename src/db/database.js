@@ -18,7 +18,8 @@ class Database {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         autoIndex: true,
-        useFindAndModify: false
+        useFindAndModify: false,
+        useCreateIndex: true
       });
       this.connection = mongoose.connection;
     }

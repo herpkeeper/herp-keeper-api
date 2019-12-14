@@ -5,6 +5,9 @@
   "database": {
     "url": "mongodb://localhost:27017/herp-keeper-test"
   },
+  "redis": {
+    "url": "redis://localhost:6400"
+  },
   "jwt": {
     "secret": "secret"
   }
