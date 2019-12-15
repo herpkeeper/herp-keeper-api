@@ -1,0 +1,51 @@
+doctype html
+
+html
+  head
+    include includes/head.pug
+    style
+      include includes/style.css
+    
+  body(bgcolor='#E1E1E1', leftmargin='0', marginwidth='0', topmargin='0', marginheight='0', offset='0')
+    center(style='background-color:#E1E1E1;')
+      table
+        tr
+          td(align='center', valign='top', id='bodyCell')
+          
+            // Header
+            table(bgcolor='#E1E1E1', border='0', cellpadding='0', cellspacing='0', width='500', id='emailHeader')
+              tr
+                td(align='center', valign='top')
+                  table(border='0', cellpadding='0', cellspacing='0', width='100%')
+                    tr
+                      td(align='center', valign='top')
+                        table(border='0', cellpadding='10', cellspacing='0', width='500', class='flexibleContainer')
+                          tr
+                            td(valign='top', width='500', class='flexibleContainerCell')
+                              table(align='left', border='0', cellpadding='0', cellspacing='0', width='100%')
+                                tr
+                  
+            // Body
+            table(bgcolor='#FFFFFF', border='0', cellpadding='0', cellspacing='0', width='500', id='emailBody')
+              // Intro row
+              tr
+                td(align='center', valign='top')
+                  // Centering table
+                  table(border='0', cellpadding='0', cellspacing='0', width='100%', style='color:#FFFFFF;', bgcolor='#36942b')
+                    tr
+                      td(align='center', valign='top')
+                        // Flexible container
+                        table(border='0', cellpadding='0', cellspacing='0', width='500', class='flexibleContainer')
+                          tr
+                            td(align='center', valign='top,' width='500', class='flexibleContainerCell')
+                              // Content table
+                              table(border='0', cellpadding='30', cellspacing='0', width='100%')
+                                tr
+                                  td(align='center', valign='top', class='textContent')
+                                    h1(style='color:#FFFFFF;line-height:100%;font-family:Helvetica,Arial,sans-serif;font-size:35px;font-weight:normal;margin-bottom:5px;text-align:center;') Herp Keeper
+                                    h2(style='text-align:center;font-weight:normal;font-family:Helvetica,Arial,sans-serif;font-size:23px;margin-bottom:10px;color:#FFFFFF;line-height:135%;') #{subHeader}
+              // Include body
+              block content          
+          
+            // Footer
+            include includes/footer.pug

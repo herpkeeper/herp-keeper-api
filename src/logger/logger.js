@@ -15,7 +15,25 @@ const myFormat = printf(({
   level, message, label, timestamp
 }) => `${timestamp} [${label}] ${level}: ${message}`);
 
+const expressFormat = printf(({ level, message, timestamp }) => {
+  return `${timestamp} [express] ${level}: ${message}`;
+});
+
 class Logger {
+
+  static getExpressLogger() {
+    return {
+      transports: [
+        new winston.transports.Console({ level: 'debug' })
+      ],
+      format: combine(
+        timestamp(),
+        colorize(),
+        expressFormat
+      ),
+      level: 'debug'
+    };
+  }
 
   static getLogger(category) {
     winston.loggers.add(category, {

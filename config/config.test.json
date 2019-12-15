@@ -10,5 +10,17 @@
   },
   "jwt": {
     "secret": "secret"
-  }
+  },
+  "email": {
+    "from": "noreply@herp-keeper.com",
+    "send": false,
+    "transport": {
+      "service": "gmail",
+      "auth": {
+        "user": "test@gmail.com",
+        "pass": "testpassword"
+      }
+    }
+  },
+  "activationUrl": "http://localhost:4200/activate-account"
 }
