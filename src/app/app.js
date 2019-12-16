@@ -9,18 +9,22 @@ require('express-async-errors');
 const Logger = require('../logger/logger');
 const RegisterApi = require('../register/register-api');
 const ActivateAccountApi = require('../activate-account/activate-account-api');
+const AuthenticateApi = require('../authenticate/authenticate-api');
 
 class App {
 
-  constructor(config, mailer, collections) {
-    this.collections = collections || { };
+  constructor(config, tokenFactory, mailer, collections) {
+    collections = collections || { };
     if (!config) {
       throw new Error('Config is not set');
+    }
+    if (!tokenFactory) {
+      throw new Error('Token factory is not set');
     }
     if (!mailer) {
       throw new Error('Mailer is not set');
     }
-    if (!collections.profileCollection) {
+    if (!collections.profileCollection || !collections.refreshTokenCollection) {
       throw new Error('Collections not properly setup');
     }
 
@@ -34,12 +38,15 @@ class App {
 
     // Set things in app so routes can access them, do this for shared things instead of relying on bind.
     this._app.set('config', config);
+    this._app.set('tokenFactory', tokenFactory);
     this._app.set('mailer', mailer);
     this._app.set('profileCollection', collections.profileCollection);
+    this._app.set('refreshTokenCollection', collections.refreshTokenCollection);
 
     // Create routes
     this.registerApi = new RegisterApi(router);
     this.activateAccountApi = new ActivateAccountApi(router);
+    this.authenticateApi = new AuthenticateApi(router);
 
     this._app.use('/api', router);
   }

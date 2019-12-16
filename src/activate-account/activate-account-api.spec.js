@@ -12,6 +12,8 @@ const Config = require('../config/config');
 const Publisher = require('../messaging/publisher');
 const Database = require('../db/database');
 const Mailer = require('../mail/mailer');
+const TokenFactory = require('../token/token-factory');
+const RefreshTokenCollection = require('../token/refresh-token-collection');
 
 const expect = chai.expect;
 
@@ -23,8 +25,10 @@ describe('ActivateAccountApi', () => {
   let mongoServer;
   let redisServer;
   let profileCollection;
+  let refreshTokenCollection;
   let publisher;
   let mailer;
+  let tokenFactory;
   let profile;
 
   before(async function() {
@@ -45,7 +49,9 @@ describe('ActivateAccountApi', () => {
     database = new Database(config);
     await database.getConnection();
     profileCollection = new ProfileCollection(database);
+    refreshTokenCollection = new RefreshTokenCollection(database);
     await profileCollection.createIndexes();
+    await refreshTokenCollection.createIndexes();
     profile = await profileCollection.create({
       username: 'user1',
       email: 'user1@herp-keeper.com',
@@ -56,8 +62,10 @@ describe('ActivateAccountApi', () => {
       active: false
     });
     mailer = new Mailer(config);
-    app = new App(config, mailer, {
-      profileCollection
+    tokenFactory = new TokenFactory(config);
+    app = new App(config, tokenFactory, mailer, {
+      profileCollection,
+      refreshTokenCollection
     }).app;
   });
 
@@ -72,6 +80,8 @@ describe('ActivateAccountApi', () => {
     const res = await request(app)
       .get('/api/activate-account');
     expect(res.statusCode).to.equal(422);
+    expect(res.body.errors).to.exist;
+    expect(res.body.errors.length).to.equal(2);
   });
 
   it('should fail to activate account due to profile not found', async () => {

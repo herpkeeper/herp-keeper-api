@@ -12,6 +12,8 @@ const Config = require('../config/config');
 const Publisher = require('../messaging/publisher');
 const Database = require('../db/database');
 const Mailer = require('../mail/mailer');
+const TokenFactory = require('../token/token-factory');
+const RefreshTokenCollection = require('../token/refresh-token-collection');
 
 const expect = chai.expect;
 
@@ -23,8 +25,10 @@ describe('RegisterApi', () => {
   let mongoServer;
   let redisServer;
   let profileCollection;
+  let refreshTokenCollection;
   let publisher;
   let mailer;
+  let tokenFactory;
 
   before(async function() {
     this.timeout(10000);
@@ -44,10 +48,14 @@ describe('RegisterApi', () => {
     database = new Database(config);
     await database.getConnection();
     profileCollection = new ProfileCollection(database);
+    refreshTokenCollection = new RefreshTokenCollection(database);
     await profileCollection.createIndexes();
+    await refreshTokenCollection.createIndexes();
     mailer = new Mailer(config);
-    app = new App(config, mailer, {
-      profileCollection
+    tokenFactory = new TokenFactory(config);
+    app = new App(config, tokenFactory, mailer, {
+      profileCollection,
+      refreshTokenCollection
     }).app;
   });
 
