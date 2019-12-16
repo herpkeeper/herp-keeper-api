@@ -11,6 +11,7 @@ const RegisterApi = require('../register/register-api');
 const ActivateAccountApi = require('../activate-account/activate-account-api');
 const AuthenticateApi = require('../authenticate/authenticate-api');
 const TokenApi = require('../token/token-api');
+const LocationApi = require('../location/location-api');
 
 class App {
 
@@ -25,7 +26,9 @@ class App {
     if (!mailer) {
       throw new Error('Mailer is not set');
     }
-    if (!collections.profileCollection || !collections.refreshTokenCollection) {
+    if (!collections.profileCollection ||
+        !collections.refreshTokenCollection ||
+        !collections.locationCollection) {
       throw new Error('Collections not properly setup');
     }
 
@@ -43,12 +46,14 @@ class App {
     this._app.set('mailer', mailer);
     this._app.set('profileCollection', collections.profileCollection);
     this._app.set('refreshTokenCollection', collections.refreshTokenCollection);
+    this._app.set('locationCollection', collections.locationCollection);
 
     // Create routes
     this.registerApi = new RegisterApi(router);
     this.activateAccountApi = new ActivateAccountApi(router);
     this.authenticateApi = new AuthenticateApi(router);
     this.tokenApi = new TokenApi(router);
+    this.locationApi = new LocationApi(router, tokenFactory);
 
     this._app.use('/api', router);
   }

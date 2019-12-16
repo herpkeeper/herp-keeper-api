@@ -1,61 +1,24 @@
 const chai = require('chai');
-const express = require('express');
 const request = require('supertest');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const RedisServer = require('redis-server');
 const ObjectID = require('mongodb').ObjectID;
 
-const App = require('../app/app');
-const profileSchema = require('../profile/profile-schema');
-const ProfileCollection = require('../profile/profile-collection');
-const Config = require('../config/config');
-const Publisher = require('../messaging/publisher');
-const Database = require('../db/database');
-const Mailer = require('../mail/mailer');
-const TokenFactory = require('../token/token-factory');
-const RefreshTokenCollection = require('../token/refresh-token-collection');
+const testApi = require('../test/test-api');
 
 const expect = chai.expect;
 
 describe('TokenApi', () => {
 
   let app;
-  let database;
-  let config;
-  let mongoServer;
-  let redisServer;
-  let profileCollection;
-  let refreshTokenCollection;
-  let publisher;
-  let mailer;
-  let tokenFactory;
   let refreshToken;
   let refreshTokenNoUser;
   let refreshTokenBadToken;
 
   before(async function() {
     this.timeout(10000);
-    redisServer = new RedisServer({
-      port: 6400,
-      bin: '/usr/local/bin/redis-server'
-    });
-    await redisServer.open();
-    mongoServer = new MongoMemoryServer();
-    const uri = await mongoServer.getConnectionString();
-    config = new Config('test');
-    await config.load();
-    config.set('database.url', uri);
-    config.set('redis.url', 'redis://localhost:6400');
-    publisher = new Publisher(config);
-    profileSchema.publisher = publisher;
-    database = new Database(config);
-    await database.getConnection();
-    profileCollection = new ProfileCollection(database);
-    refreshTokenCollection = new RefreshTokenCollection(database);
-    await profileCollection.createIndexes();
-    await refreshTokenCollection.createIndexes();
-    mailer = new Mailer(config);
-    tokenFactory = new TokenFactory(config);
+    app = await testApi.setup();
+    const tokenFactory = app.get('tokenFactory');
+    const refreshTokenCollection = app.get('refreshTokenCollection');
+    const profileCollection = app.get('profileCollection');
     let t = await tokenFactory.createRefreshToken({
       username: 'user',
       role: 'member'
@@ -85,17 +48,10 @@ describe('TokenApi', () => {
       active: true
     };
     await profileCollection.create(profile);
-    app = new App(config, tokenFactory, mailer, {
-      profileCollection,
-      refreshTokenCollection
-    }).app;
   });
 
   after(async function() {
-    await database.disconnect();
-    await mongoServer.stop();
-    await publisher.disconnect();
-    await redisServer.close();
+    await testApi.tearDown();
   });
 
   it('should fail to refresh token due to invalid request', async () => {

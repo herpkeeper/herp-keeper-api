@@ -47,6 +47,7 @@
     "mongodb-memory-server": "^6.0.2",
     "nyc": "^14.1.1",
     "redis-server": "^1.2.2",
+    "sinon": "^7.5.0",
     "sleep-promise": "^8.0.1",
     "supertest": "^4.0.2"
   }
