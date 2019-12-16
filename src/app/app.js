@@ -10,6 +10,7 @@ const Logger = require('../logger/logger');
 const RegisterApi = require('../register/register-api');
 const ActivateAccountApi = require('../activate-account/activate-account-api');
 const AuthenticateApi = require('../authenticate/authenticate-api');
+const TokenApi = require('../token/token-api');
 
 class App {
 
@@ -47,6 +48,7 @@ class App {
     this.registerApi = new RegisterApi(router);
     this.activateAccountApi = new ActivateAccountApi(router);
     this.authenticateApi = new AuthenticateApi(router);
+    this.tokenApi = new TokenApi(router);
 
     this._app.use('/api', router);
   }
