@@ -22,5 +22,15 @@
       }
     }
   },
+  "aws": {
+    "s3": {
+      "id": "S3RVER",
+      "key": "S3RVER",
+      "endpoint": "http://localhost:10001",
+      "ssl": false,
+      "forcePathStyle": true,
+      "bucket": "herp-keeper-test"
+    }
+  },
   "activationUrl": "http://localhost:4200/activate-account"
 }
