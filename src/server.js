@@ -11,6 +11,7 @@ const Mailer = require('./mail/mailer');
 const TokenFactory = require('./token/token-factory');
 const App = require('./app/app');
 const WsServer = require('./ws/ws-server');
+const Subscriber = require('./messaging/subscriber');
 
 const log = Logger.getLogger('server');
 const env = process.env.API_ENV || 'prod';
@@ -27,6 +28,7 @@ let tokenFactory;
 let app;
 let server;
 let wsServer;
+let subscriber;
 
 log.debug('Starting server');
 
@@ -47,6 +49,10 @@ async function shutdown() {
 
   if (publisher) {
     await publisher.disconnect();
+  }
+
+  if (subscriber) {
+    await subscriber.stop();
   }
 }
 
@@ -106,6 +112,10 @@ process.on('SIGINT', async function() {
     // Now create websocket server
     wsServer = new WsServer(server, tokenFactory);
     wsServer.start();
+
+    // Create subsciber and start
+    subscriber = new Subscriber(config, wsServer);
+    await subscriber.start();
   } catch (err) {
     log.error(`Failed to start server: ${err}`);
     await shutdown();
