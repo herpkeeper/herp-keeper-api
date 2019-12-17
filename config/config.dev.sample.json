@@ -1,0 +1,36 @@
+{
+  "app": {
+    "port": 8080
+  },
+  "database": {
+    "url": "mongodb://mongodb:27017/herp-keeper-dev"
+  },
+  "redis": {
+    "url": "redis://redis:6400"
+  },
+  "jwt": {
+    "secret": "o9u4ft8MHzpUUXkyXt4TaxVHb15ez7KA"
+  },
+  "email": {
+    "from": "noreply@herp-keeper.com",
+    "send": false,
+    "transport": {
+      "service": "gmail",
+      "auth": {
+        "user": "",
+        "pass": ""
+      }
+    }
+  },
+  "aws": {
+    "s3": {
+      "id": "S3ACCESS",
+      "key": "S3SECRET",
+      "endpoint": "http://minio:9000",
+      "ssl": false,
+      "forcePathStyle": true,
+      "bucket": "herp-keeper-dev"
+    }
+  },
+  "activationUrl": "http://localhost:4200/activate-account"
+}

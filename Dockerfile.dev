@@ -1,0 +1,22 @@
+FROM node:13
+
+WORKDIR /usr/local/api/config
+
+
+WORKDIR /usr/local/api
+
+COPY package*.json ./
+
+RUN npm install --unsafe-perm
+
+COPY src src
+
+COPY emails emails
+
+COPY config/config.dev.json config/config.dev.json
+
+EXPOSE 8080
+
+ENV API_ENV dev
+
+CMD [ "node", "src/server.js" ]

@@ -32,6 +32,9 @@ class App {
       throw new Error('Collections not properly setup');
     }
 
+    this.log = Logger.getLogger('app:app');
+    this.config = config;
+
     this._app = express();
 
     // Add middlewares
@@ -56,6 +59,12 @@ class App {
     this.locationApi = new LocationApi(router, tokenFactory);
 
     this._app.use('/api', router);
+  }
+
+  async listen() {
+    const server = await this._app.listen(this.config.get('app.port'));
+    this.log.debug(`App listening on port ${this.config.get('app.port')}`);
+    return server;
   }
 
   get app() { return this._app; }
