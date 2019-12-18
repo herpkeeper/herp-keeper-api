@@ -2,7 +2,7 @@
   "name": "herp-keeper-api",
   "version": "1.0.0",
   "description": "",
-  "main": "src/start.js",
+  "main": "src/server.js",
   "keywords": [],
   "author": "Scott Guilbeaux <scott@herp-keeper.com>",
   "license": "ISC",

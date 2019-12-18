@@ -1,0 +1,54 @@
+version: "3.7"
+
+services:
+  mongodb:
+    image: "mongo:latest"
+    container_name: herp-keeper-mongodb-dev
+    volumes:
+      - mongodb:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - herp-keeper-api
+
+  redis:
+    image: "redis:latest"
+    container_name: herp-keeper-redis-dev
+    networks:
+      - herp-keeper-api
+
+  minio:
+    image: "minio/minio:latest"
+    container_name: herp-keeper-minio-dev
+    command: minio server /data
+    environment:
+      MINIO_ACCESS_KEY: S3ACCESS
+      MINIO_SECRET_KEY: S3SECRET
+    volumes:
+      - minio:/data
+    networks:
+      - herp-keeper-api
+      
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: herp-keeper-api-dev:latest
+    container_name: herp-keeper-api-dev
+    networks:
+      - herp-keeper-api
+    depends_on:
+      - mongodb
+      - redis
+      - minio
+      
+networks:
+  herp-keeper-api:
+    name: herpkeeper-api-network-dev
+    
+volumes:
+  mongodb:
+    name: mongodb_volume_dev
+  mongodb_config:
+    name: mongodb_config_volume_dev
+  minio:
+    name: minio_volume_dev
