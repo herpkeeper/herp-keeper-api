@@ -57,6 +57,34 @@ class SpeciesApi {
   }
 
   async save(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      this.log.warn('Failed to save species due to validation errors: %o', errors);
+      res.status(422).json({ errors: errors.array() });
+    } else {
+      const username = req.user;
+      this.log.debug(`Attempt to save species ${req.body.commonName} for user ${username}`);
+      // First get our profile
+      const profileCollection = req.app.get('profileCollection');
+      const speciesCollection = req.app.get('speciesCollection');
+      const profile = await profileCollection.findByUsername(username);
+      if (profile) {
+        if (req.body._id) {
+          try {
+            const updated = await speciesCollection.update(profile._id, req.body);
+            res.send(updated);
+          } catch (err) {
+            this.log.warn(`Failed to update species ${req.body._id} for profile ${profile._id}: ${err}`);
+            res.status(404).json({ error: { message: 'Failed to update species' } });
+          }
+        } else {
+          res.send(await speciesCollection.create(profile._id, req.body));
+        }
+      } else {
+        this.log.warn(`Failed to save species, profile ${username} not found`);
+        res.status(404).json({ error: { message: 'Failed to save species' } });
+      }
+    }
   }
 
 }
