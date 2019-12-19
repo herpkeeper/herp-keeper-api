@@ -50,10 +50,12 @@ class SpeciesApi {
     this.router = router;
     this.tokenFactory = tokenFactory;
     es6BindAll(this, [
-      'save'
+      'save',
+      'delete'
     ]);
 
     this.router.post('/species', checkJwt({ tokenFactory, roles: ['member'] }), checkSpecies, this.save);
+    this.router.delete('/species/:id', checkJwt({ tokenFactory, roles: ['member'] }), this.delete);
   }
 
   async save(req, res) {
@@ -84,6 +86,27 @@ class SpeciesApi {
         this.log.warn(`Failed to save species, profile ${username} not found`);
         res.status(404).json({ error: { message: 'Failed to save species' } });
       }
+    }
+  }
+
+  async delete(req, res) {
+    const id = req.params.id;
+    const username = req.user;
+    this.log.debug(`Attempt to delete species ${id} for user ${username}`);
+    const profileCollection = req.app.get('profileCollection');
+    const speciesCollection = req.app.get('speciesCollection');
+    const profile = await profileCollection.findByUsername(username);
+    if (profile) {
+      try {
+        const deleted = await speciesCollection.remove(profile._id, id);
+        res.send(deleted);
+      } catch (err) {
+        this.log.warn(`Failed to delete species ${id} for profile ${profile._id}: ${err}`);
+        res.status(404).json({ error: { message: 'Failed to delete species' } });
+      }
+    } else {
+      this.log.warn(`Failed to delete species, profile ${username} not found`);
+      res.status(404).json({ error: { message: 'Failed to delete species' } });
     }
   }
 

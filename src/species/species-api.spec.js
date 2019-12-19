@@ -6,7 +6,7 @@ const testApi = require('../test/test-api');
 
 const expect = chai.expect;
 
-describe.only('SpeciesApi', () => {
+describe('SpeciesApi', () => {
 
   let app;
   let adminToken;
@@ -121,6 +121,66 @@ describe.only('SpeciesApi', () => {
             .send(toUpdate);
     expect(res.statusCode).to.equal(404);
     expect(res.body.error.message).to.equal('Failed to update species');
+  });
+
+  it('should update species', async () => {
+    const toUpdate = profile.species[0];
+    toUpdate.commonName = 'Updated Name';
+    const res = await request(app)
+            .post('/api/species')
+            .set('Authorization', `Bearer ${userToken}`)
+            .send(toUpdate);
+    expect(res.statusCode).to.equal(200);
+    expect(res.body.commonName).to.equal('Updated Name');
+  });
+
+  it('should fail to delete species due to no authorization header', async () => {
+    const res = await request(app)
+            .delete('/api/species/id');
+    expect(res.statusCode).to.equal(401);
+    expect(res.body.error.message).to.equal('No authorization header');
+  });
+
+  it('should fail to delete species due to invalid token', async () => {
+    const res = await request(app)
+            .delete('/api/species/id')
+            .set('Authorization', 'Bearer bad');
+    expect(res.statusCode).to.equal(401);
+    expect(res.body.error.message).to.equal('Could not verify token');
+  });
+
+  it('should fail to delete species due to invalid role', async () => {
+    const res = await request(app)
+            .delete('/api/species/id')
+            .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.statusCode).to.equal(403);
+    expect(res.body.error.message).to.equal('Role is not authorized');
+  });
+
+  it('should fail to to delete species due to profile not found', async () => {
+    const res = await request(app)
+            .delete('/api/species/id')
+            .set('Authorization', `Bearer ${badUserToken}`);
+    expect(res.statusCode).to.equal(404);
+    expect(res.body.error.message).to.equal('Failed to delete species');
+  });
+
+  it('should fail to to delete species due to species not found', async () => {
+    const id = new ObjectID().toHexString();
+    const res = await request(app)
+            .delete(`/api/species/${id}`)
+            .set('Authorization', `Bearer ${userToken}`);
+    expect(res.statusCode).to.equal(404);
+    expect(res.body.error.message).to.equal('Failed to delete species');
+  });
+
+  it('should delete species', async () => {
+    const id = profile.species[0]._id;
+    const res = await request(app)
+            .delete(`/api/species/${id}`)
+            .set('Authorization', `Bearer ${userToken}`);
+    expect(res.statusCode).to.equal(200);
+    expect(res.body._id).to.equal(id.toHexString());
   });
 
 });
