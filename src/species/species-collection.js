@@ -28,6 +28,42 @@ class SpeciesCollection {
     return newSpecies;
   }
 
+  async update(profileId, species) {
+    this.log.debug(`Attempt to update species ${species._id} in profile ${profileId}`);
+    await this.database.getConnection();
+    const parent = await this.profileCollection.findById(new ObjectID(profileId));
+    if (!parent) {
+      this.log.warn(`Failed to update species, profile ${profileId} not found`);
+      throw new Error(`Failed to update species, profile ${profileId} not found`);
+    }
+    const sub = parent.species.id(new ObjectID(species._id));
+    if (!sub) {
+      this.log.warn(`Failed to update species, species ${species._id} not found`);
+      throw new Error(`Failed to update species, species ${species._id} not found`);
+    }
+    const updatedSpecies = sub.set(species);
+    const res = await parent.save();
+    return updatedSpecies;
+  }
+
+  async remove(profileId, speciesId) {
+    this.log.debug(`Attempt to remove species ${speciesId} in profile ${profileId}`);
+    await this.database.getConnection();
+    const parent = await this.profileCollection.findById(new ObjectID(profileId));
+    if (!parent) {
+      this.log.warn(`Failed to remove species, profile ${profileId} not found`);
+      throw new Error(`Failed to remove species, profile ${profileId} not found`);
+    }
+    const sub = parent.species.id(new ObjectID(speciesId));
+    if (!sub) {
+      this.log.warn(`Failed to remove species, species ${speciesId} not found`);
+      throw new Error(`Failed to remove species, species ${speciesId} not found`);
+    }
+    const removed = await sub.remove();
+    const res = await parent.save();
+    return removed;
+  }
+
 }
 
 module.exports = SpeciesCollection;

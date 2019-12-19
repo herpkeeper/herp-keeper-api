@@ -14,7 +14,7 @@ const Database = require('../db/database');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe.only('SpeciesCollection', () => {
+describe('SpeciesCollection', () => {
 
   let speciesCollection;
   let database;
@@ -88,6 +88,46 @@ describe.only('SpeciesCollection', () => {
     expect(res).to.exist;
     expect(res._id).to.exist;
     expect(res.commonName).to.equal('Eastern Indigo Snake');
+  });
+
+  it('should fail to update species due to parent not found', async () => {
+    const toUpdate = profile.species[0];
+    toUpdate.commonName = 'Updated Name';
+    await expect(speciesCollection.update(new ObjectID(), toUpdate)).to.be.rejectedWith(/Failed to update species, profile/);
+  });
+
+  it('should fail to update species due to species not found', async () => {
+    const toUpdate = {
+      _id: new ObjectID()
+    };
+    await expect(speciesCollection.update(profile._id, toUpdate)).to.be.rejectedWith(/Failed to update species, species/);
+  });
+
+  it('should update species', async () => {
+    const toUpdate = profile.species[0];
+    toUpdate.commonName = 'Updated Name';
+    toUpdate.genus = 'Genus';
+    toUpdate.species = 'species';
+    const res = await speciesCollection.update(profile._id, toUpdate);
+    expect(res).to.exist;
+    expect(res._id).to.equal(profile.species[0]._id);
+    expect(res.commonName).to.equal('Updated Name');
+    expect(res.genus).to.equal('Genus');
+    expect(res.species).to.equal('species');
+  });
+
+  it('should fail to remove species due to parent not found', async () => {
+    await expect(speciesCollection.remove(new ObjectID(), profile.species[0]._id)).to.be.rejectedWith(/Failed to remove species, profile/);
+  });
+
+  it('should fail to remove species due to species not found', async () => {
+    await expect(speciesCollection.remove(profile._id, new ObjectID())).to.be.rejectedWith(/Failed to remove species, species/);
+  });
+
+  it('should remove species', async () => {
+    const res = await speciesCollection.remove(profile._id, profile.species[0]._id);
+    expect(res).to.exist;
+    expect(res._id.toHexString()).to.equal(profile.species[0]._id.toHexString());
   });
 
 });
