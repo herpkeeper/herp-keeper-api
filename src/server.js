@@ -6,7 +6,9 @@ const Publisher = require('./messaging/publisher');
 const profileSchema = require('./profile/profile-schema');
 const ProfileCollection = require('./profile/profile-collection');
 const RefreshTokenCollection = require('./token/refresh-token-collection');
+const ImageCollection = require('./image/image-collection');
 const LocationCollection = require('./location/location-collection');
+const SpeciesCollection = require('./species/species-collection');
 const Mailer = require('./mail/mailer');
 const TokenFactory = require('./token/token-factory');
 const App = require('./app/app');
@@ -23,7 +25,9 @@ let s3;
 let publisher;
 let profileCollection;
 let refreshTokenCollection;
+let imageCollection;
 let locationCollection;
+let speciesCollection;
 let mailer;
 let tokenFactory;
 let app;
@@ -91,7 +95,9 @@ process.on('SIGINT', async function() {
     // Create collections
     profileCollection = new ProfileCollection(database);
     refreshTokenCollection = new RefreshTokenCollection(database);
+    imageCollection = new ImageCollection(database, profileCollection);
     locationCollection = new LocationCollection(database, profileCollection);
+    speciesCollection = new SpeciesCollection(database, profileCollection);
 
     // Create indexes
     await profileCollection.createIndexes();
@@ -110,7 +116,9 @@ process.on('SIGINT', async function() {
     app = new App(config, tokenFactory, mailer, imageStore, {
       profileCollection,
       refreshTokenCollection,
-      locationCollection
+      imageCollection,
+      locationCollection,
+      speciesCollection
     });
     server = await app.listen();
 
