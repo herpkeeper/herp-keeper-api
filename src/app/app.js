@@ -12,11 +12,12 @@ const ActivateAccountApi = require('../activate-account/activate-account-api');
 const AuthenticateApi = require('../authenticate/authenticate-api');
 const TokenApi = require('../token/token-api');
 const LogoutApi = require('../logout/logout-api');
+const ImageApi = require('../image/image-api');
 const LocationApi = require('../location/location-api');
 
 class App {
 
-  constructor(config, tokenFactory, mailer, collections) {
+  constructor(config, tokenFactory, mailer, imageStore, collections) {
     collections = collections || { };
     if (!config) {
       throw new Error('Config is not set');
@@ -27,8 +28,12 @@ class App {
     if (!mailer) {
       throw new Error('Mailer is not set');
     }
+    if (!imageStore) {
+      throw new Error('Image store is not set');
+    }
     if (!collections.profileCollection ||
         !collections.refreshTokenCollection ||
+        !collections.imageCollection ||
         !collections.locationCollection) {
       throw new Error('Collections not properly setup');
     }
@@ -48,8 +53,10 @@ class App {
     this._app.set('config', config);
     this._app.set('tokenFactory', tokenFactory);
     this._app.set('mailer', mailer);
+    this._app.set('imageStore', imageStore);
     this._app.set('profileCollection', collections.profileCollection);
     this._app.set('refreshTokenCollection', collections.refreshTokenCollection);
+    this._app.set('imageCollection', collections.imageCollection);
     this._app.set('locationCollection', collections.locationCollection);
 
     // Create routes
@@ -58,6 +65,7 @@ class App {
     this.authenticateApi = new AuthenticateApi(router);
     this.tokenApi = new TokenApi(router);
     this.logoutApi = new LogoutApi(router);
+    this.imageApi = new ImageApi(router, tokenFactory);
     this.locationApi = new LocationApi(router, tokenFactory);
 
     this._app.use('/api', router);

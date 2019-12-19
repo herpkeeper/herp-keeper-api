@@ -12,6 +12,7 @@ const TokenFactory = require('./token/token-factory');
 const App = require('./app/app');
 const WsServer = require('./ws/ws-server');
 const Subscriber = require('./messaging/subscriber');
+const ImageStore = require('./image/image-store');
 
 const log = Logger.getLogger('server');
 const env = process.env.API_ENV || 'prod';
@@ -29,6 +30,7 @@ let app;
 let server;
 let wsServer;
 let subscriber;
+let imageStore;
 
 log.debug('Starting server');
 
@@ -101,8 +103,11 @@ process.on('SIGINT', async function() {
     // Create token factory
     tokenFactory = new TokenFactory(config);
 
+    // Create image store
+    imageStore = new ImageStore(s3, config.get('aws.s3.bucket'));
+
     // Create app and listen
-    app = new App(config, tokenFactory, mailer, {
+    app = new App(config, tokenFactory, mailer, imageStore, {
       profileCollection,
       refreshTokenCollection,
       locationCollection
