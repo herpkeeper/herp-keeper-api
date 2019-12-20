@@ -14,7 +14,7 @@ const Database = require('../db/database');
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe.only('AnimalCollection', () => {
+describe('AnimalCollection', () => {
 
   let animalCollection;
   let database;

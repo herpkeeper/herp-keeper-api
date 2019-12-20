@@ -9,6 +9,7 @@ const RefreshTokenCollection = require('./token/refresh-token-collection');
 const ImageCollection = require('./image/image-collection');
 const LocationCollection = require('./location/location-collection');
 const SpeciesCollection = require('./species/species-collection');
+const AnimalCollection = require('./animal/animal-collection');
 const Mailer = require('./mail/mailer');
 const TokenFactory = require('./token/token-factory');
 const App = require('./app/app');
@@ -28,6 +29,7 @@ let refreshTokenCollection;
 let imageCollection;
 let locationCollection;
 let speciesCollection;
+let animalCollection;
 let mailer;
 let tokenFactory;
 let app;
@@ -98,6 +100,7 @@ process.on('SIGINT', async function() {
     imageCollection = new ImageCollection(database, profileCollection);
     locationCollection = new LocationCollection(database, profileCollection);
     speciesCollection = new SpeciesCollection(database, profileCollection);
+    animalCollection =  new AnimalCollection(database, profileCollection);
 
     // Create indexes
     await profileCollection.createIndexes();
@@ -118,7 +121,8 @@ process.on('SIGINT', async function() {
       refreshTokenCollection,
       imageCollection,
       locationCollection,
-      speciesCollection
+      speciesCollection,
+      animalCollection
     });
     server = await app.listen();
 

@@ -15,6 +15,7 @@ const LogoutApi = require('../logout/logout-api');
 const ImageApi = require('../image/image-api');
 const LocationApi = require('../location/location-api');
 const SpeciesApi = require('../species/species-api');
+const AnimalApi = require('../animal/animal-api');
 
 class App {
 
@@ -36,7 +37,8 @@ class App {
         !collections.refreshTokenCollection ||
         !collections.imageCollection ||
         !collections.locationCollection ||
-        !collections.speciesCollection) {
+        !collections.speciesCollection ||
+        !collections.animalCollection) {
       throw new Error('Collections not properly setup');
     }
 
@@ -61,6 +63,7 @@ class App {
     this._app.set('imageCollection', collections.imageCollection);
     this._app.set('locationCollection', collections.locationCollection);
     this._app.set('speciesCollection', collections.speciesCollection);
+    this._app.set('animalCollection', collections.animalCollection);
 
     // Create routes
     this.registerApi = new RegisterApi(router);
@@ -71,6 +74,7 @@ class App {
     this.imageApi = new ImageApi(router, tokenFactory);
     this.locationApi = new LocationApi(router, tokenFactory);
     this.speciesApi = new SpeciesApi(router, tokenFactory);
+    this.animalApi = new AnimalApi(router, tokenFactory);
 
     this._app.use('/api', router);
   }

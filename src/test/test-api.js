@@ -12,6 +12,7 @@ const RefreshTokenCollection = require('../token/refresh-token-collection');
 const ImageCollection = require('../image/image-collection');
 const LocationCollection = require('../location/location-collection');
 const SpeciesCollection = require('../species/species-collection');
+const AnimalCollection = require('../animal/animal-collection');
 const Mailer = require('../mail/mailer');
 const TokenFactory = require('../token/token-factory');
 const S3 = require('../aws/s3');
@@ -28,6 +29,7 @@ let refreshTokenCollection;
 let imageCollection;
 let locationCollection;
 let speciesCollection;
+let animalCollection;
 let mailer;
 let tokenFactory;
 let s3;
@@ -62,6 +64,7 @@ async function setup() {
   imageCollection = new ImageCollection(database, profileCollection);
   locationCollection = new LocationCollection(database, profileCollection);
   speciesCollection = new SpeciesCollection(database, profileCollection);
+  animalCollection = new AnimalCollection(database, profileCollection);
   await profileCollection.createIndexes();
   await refreshTokenCollection.createIndexes();
   mailer = new Mailer(config);
@@ -74,7 +77,8 @@ async function setup() {
     refreshTokenCollection,
     imageCollection,
     locationCollection,
-    speciesCollection
+    speciesCollection,
+    animalCollection
   }).app;
   return app;
 }
