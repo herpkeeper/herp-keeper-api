@@ -4,7 +4,6 @@ const es6BindAll = require('es6bindall');
 const url = require('url');
 
 const Logger = require('../logger/logger');
-const TokenFactory = require('../token/token-factory');
 
 class WsServer {
 
@@ -91,7 +90,7 @@ class WsServer {
   /**
    * Handle connection.
    */
-  handleConnection(ws, request) {
+  handleConnection(ws, connection) {
     const connectionId = uuidv4();
     // Need to do bind all of these to socket so we can access them
     ws.id = connectionId;

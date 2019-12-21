@@ -81,7 +81,22 @@ describe('LocationApi', () => {
     const res = await request(app)
             .post('/api/location')
             .set('Authorization', `Bearer ${userToken}`)
-            .send({});
+            .send({
+            });
+    expect(res.statusCode).to.equal(422);
+    expect(res.body.errors).to.exist;
+    expect(res.body.errors.length).to.equal(3);
+  });
+
+  it('should fail to save location due to invalid geolocation in request', async () => {
+    const res = await request(app)
+            .post('/api/location')
+            .set('Authorization', `Bearer ${userToken}`)
+            .send({
+              geoLocation: {
+                coordinates: []
+              }
+            });
     expect(res.statusCode).to.equal(422);
     expect(res.body.errors).to.exist;
     expect(res.body.errors.length).to.equal(3);

@@ -8,8 +8,7 @@
   "license": "ISC",
   "scripts": {
     "test": "mocha src/**/*.spec.js --exit --bail",
-    "coverage": "nyc --exclude **/*.spec.js --check-coverage --reporter html --reporter text npm test",
-    "lint": "eslint src"
+    "coverage": "nyc --exclude **/*.spec.js --check-coverage --reporter html --reporter text npm test"
   },
   "config": {
     "mongodbMemoryServer": {
@@ -42,9 +41,6 @@
     "aws-sdk": "^2.591.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^6.7.2",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.19.1",
     "mocha": "^6.2.2",
     "mongodb-memory-server": "^6.0.2",
     "nyc": "^14.1.1",

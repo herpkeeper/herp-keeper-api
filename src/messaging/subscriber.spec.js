@@ -86,10 +86,19 @@ describe('Subscriber', () => {
     await subscriber.stop();
   });
 
+  it('should not fail to stop if not started', async () => {
+    await subscriber.stop();
+  });
+
   it('should subscribe and receive', async () => {
     await subscriber.start();
     await subscriber.start();
     await publisher.publish({ test: 'test' });
+  });
+
+  it('should handle unknown message', async () => {
+    subscriber.start();
+    subscriber.handleMessage({}, {});
   });
 
   it('should publish profile update message and receive via websocket', (done) => {
