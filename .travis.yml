@@ -4,12 +4,20 @@ sudo: false
 branches:
   only:
     - master
-
+    - dev
+    
 language: node_js
 
 node_js:
   - "13"
 
+addons:
+  apt:
+    sources:
+      - mongodb-4.0-trusty
+    packages:
+      - mongodb-org-server
+      
 cache:
   directories:
     - ./node_modules
