@@ -13,10 +13,7 @@ node_js:
 
 addons:
   apt:
-    sources:
-      - mongodb-4.0-bionic
     packages:
-      - mongodb-org-server
       - redis-server
       
 cache:
@@ -24,9 +21,13 @@ cache:
     - ./node_modules
 
 install:
+  - wget -qO - https://www.mongodb.org/static/pgp/server-4.2.asc | sudo apt-key add -
+  - echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list
+  - sudo apt-get update
+  - sudo apt-get install -y mongodb-org
+  - sudo ln -s /usr/bin/redis-server /usr/local/bin/redis-server
   - npm install
 
 script:
-  - ln -s /usr/bin/redis-server /usr/local/bin/redis-server
   - npm run coverage
           
