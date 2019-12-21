@@ -16,6 +16,7 @@ const ImageApi = require('../image/image-api');
 const LocationApi = require('../location/location-api');
 const SpeciesApi = require('../species/species-api');
 const AnimalApi = require('../animal/animal-api');
+const ProfileApi = require('../profile/profile-api');
 
 class App {
 
@@ -75,6 +76,7 @@ class App {
     this.locationApi = new LocationApi(router, tokenFactory);
     this.speciesApi = new SpeciesApi(router, tokenFactory);
     this.animalApi = new AnimalApi(router, tokenFactory);
+    this.profileApi = new ProfileApi(router, tokenFactory);
 
     this._app.use('/api', router);
   }
