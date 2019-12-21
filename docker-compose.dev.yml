@@ -34,6 +34,8 @@ services:
       dockerfile: Dockerfile.dev
     image: herp-keeper-api-dev:latest
     container_name: herp-keeper-api-dev
+    ports:
+      - 8080:8080
     networks:
       - herp-keeper-api
     depends_on:
