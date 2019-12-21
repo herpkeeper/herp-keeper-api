@@ -1,4 +1,4 @@
-dist: trusty
+dist: bionic
 sudo: false
 
 branches:
@@ -14,9 +14,10 @@ node_js:
 addons:
   apt:
     sources:
-      - mongodb-4.0-trusty
+      - mongodb-4.0-bionic
     packages:
       - mongodb-org-server
+      - redis-server
       
 cache:
   directories:
@@ -26,5 +27,6 @@ install:
   - npm install
 
 script:
+  - ln -s /usr/bin/redis-server /usr/local/bin/redis-server
   - npm run coverage
           
