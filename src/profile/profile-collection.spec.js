@@ -187,6 +187,26 @@ describe('ProfileCollection', () => {
     expect(res.foodTypes.length).to.equal(2);
   });
 
+  it('should update without password', async () => {
+    const p = {
+      _id: profiles[0]._id,
+      name: profiles[0].name,
+      email: profiles[0].email,
+      foodTypes: [ 'type1', 'type2' ]
+    };
+    const res = await profileCollection.update(p);
+    expect(res).to.exist;
+    expect(res._id.toHexString()).to.equal(profiles[0]._id.toHexString());
+    expect(res.username).to.equal(profiles[0].username);
+    expect(res.name).to.equal(profiles[0].name);
+    expect(res.email).to.equal(profiles[0].email);
+    expect(res.password).to.exist;
+    expect(res.createdAt).to.exist;
+    expect(res.updatedAt).to.exist;
+    expect(res.role).to.equal('member');
+    expect(res.foodTypes.length).to.equal(2);
+  });
+
   it('should update but not change password and should not break with no publisher', async () => {
     profileSchema.publisher = null;
     const p = profiles[1];

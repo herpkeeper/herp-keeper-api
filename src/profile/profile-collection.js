@@ -61,7 +61,9 @@ class ProfileCollection {
 
     doc.name = profile.name;
     doc.email = profile.email;
-    doc.password = profile.password;
+    if (profile.password) {
+      doc.password = profile.password;
+    }
     doc.foodTypes = profile.foodTypes;
 
     const updated = await doc.save();
