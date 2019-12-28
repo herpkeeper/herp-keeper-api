@@ -2,3 +2,4 @@ node_modules
 .nyc_output
 coverage
 config/config.dev.json
+config/config.local.json

@@ -8,7 +8,8 @@
   "license": "ISC",
   "scripts": {
     "test": "mocha src/**/*.spec.js --exit --bail",
-    "coverage": "nyc --exclude **/*.spec.js --check-coverage --reporter html --reporter text npm test"
+    "coverage": "nyc --exclude **/*.spec.js --check-coverage --reporter html --reporter text npm test",
+    "add-admin-user": "node utils/add-admin-user"
   },
   "config": {
     "mongodbMemoryServer": {
@@ -41,9 +42,11 @@
     "aws-sdk": "^2.591.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "command-line-args": "^5.1.1",
     "mocha": "^6.2.2",
     "mongodb-memory-server": "^6.0.2",
     "nyc": "^14.1.1",
+    "prompt-password": "^1.2.0",
     "redis-server": "^1.2.2",
     "s3rver": "^3.5.0",
     "sinon": "^7.5.0",

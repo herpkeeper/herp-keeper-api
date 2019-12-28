@@ -4,6 +4,8 @@ services:
   mongodb:
     image: "mongo:latest"
     container_name: herp-keeper-mongodb-dev
+    ports:
+      - 27017:27017
     volumes:
       - mongodb:/data/db
       - mongodb_config:/data/configdb
