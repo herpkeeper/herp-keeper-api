@@ -65,6 +65,12 @@ class ProfileCollection {
       doc.password = profile.password;
     }
     doc.foodTypes = profile.foodTypes;
+    if (typeof profile.active === 'boolean') {
+      doc.active = profile.active;
+    }
+    if (profile.role) {
+      doc.role = profile.role;
+    }
 
     const updated = await doc.save();
     return updated;

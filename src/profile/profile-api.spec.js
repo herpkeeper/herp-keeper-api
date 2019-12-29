@@ -17,6 +17,7 @@ describe('ProfileApi', () => {
   let profile2;
   let profile3;
   let profile4;
+  let newProfile;
 
   before(async function() {
     this.timeout(10000);
@@ -259,6 +260,7 @@ describe('ProfileApi', () => {
     toUpdate.name = 'Updated Name';
     toUpdate.email = 'updated@test.com';
     toUpdate.password = 'updatedpassword';
+    toUpdate.role = 'admin';
     toUpdate.foodTypes = [ 'type1', 'type2' ];
     const res = await request(app)
             .post('/api/profile/')
@@ -270,6 +272,57 @@ describe('ProfileApi', () => {
     expect(res.body.password).to.not.exist;
     expect(res.body.email).to.equal('updated@test.com');
     expect(res.body.foodTypes.length).to.equal(2);
+    expect(res.body.role).to.equal('member');
+  });
+
+  it('should create new user as admin', async () => {
+    const p = {
+      username: 'newuser',
+      name: 'New User',
+      email: 'newuser@herp-keeper.com',
+      password: 'testpassword',
+      active: true,
+      role: 'member'
+    };
+    const res = await request(app)
+            .post('/api/profile')
+            .send(p)
+            .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.statusCode).to.equal(200);
+    expect(res.body).to.exist;
+    expect(res.body._id).to.exist;
+    expect(res.body.username).to.equal('newuser');
+    expect(res.body.name).to.equal('New User');
+    expect(res.body.email).to.equal('newuser@herp-keeper.com');
+    expect(res.body.password).to.not.exist;
+    expect(res.body.active).to.be.true;
+    expect(res.body.role).to.equal('member');
+    newProfile = res.body;
+  });
+
+  it('should update user as admin', async () => {
+    const toUpdate = {
+      _id: newProfile._id,
+      name: 'Updated Name',
+      password: 'updatedpassword',
+      email: 'updated@herp-keeper.com',
+      active: false,
+      role: 'admin'
+    };
+    const res = await request(app)
+            .post('/api/profile')
+            .send(toUpdate)
+            .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.statusCode).to.equal(200);
+    expect(res.body).to.exist;
+    expect(res.body._id).to.exist;
+    expect(res.body._id).to.equal(newProfile._id);
+    expect(res.body.username).to.equal('newuser');
+    expect(res.body.name).to.equal('Updated Name');
+    expect(res.body.email).to.equal('updated@herp-keeper.com');
+    expect(res.body.password).to.not.exist;
+    expect(res.body.active).to.be.false;
+    expect(res.body.role).to.equal('admin');
   });
 
 });

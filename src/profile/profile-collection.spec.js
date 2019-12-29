@@ -172,6 +172,7 @@ describe('ProfileCollection', () => {
     p.email = 'updatedemail1@herp-keeper.com',
     p.password = 'newpassword';
     p.foodTypes = [ 'type1', 'type2' ];
+    p.active = true;
     const res = await profileCollection.update(p);
     expect(res).to.exist;
     expect(res._id.toHexString()).to.equal(profiles[0]._id.toHexString());
@@ -185,6 +186,7 @@ describe('ProfileCollection', () => {
     expect(res.updatedAt).to.exist;
     expect(res.role).to.equal('member');
     expect(res.foodTypes.length).to.equal(2);
+    expect(res.active).to.be.true;
   });
 
   it('should update without password', async () => {

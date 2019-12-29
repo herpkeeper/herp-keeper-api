@@ -34,7 +34,7 @@ class ProfileApi {
     this.router.get('/profile', checkJwt({ tokenFactory, roles: ['admin'] }), this.find);
     this.router.get('/profile/count', checkJwt({ tokenFactory, roles: ['admin'] }), this.count);
     this.router.get('/profile/:id', checkJwt({ tokenFactory, roles: ['admin', 'member'] }), this.get);
-    this.router.post('/profile', checkProfile, checkJwt({ tokenFactory, roles: ['member'] }), this.save);
+    this.router.post('/profile', checkProfile, checkJwt({ tokenFactory, roles: ['admin', 'member'] }), this.save);
   }
 
   async count(req, res) {
@@ -85,21 +85,38 @@ class ProfileApi {
       res.status(422).json({ errors: errors.array() });
     } else {
       const username = req.user;
+      const role = req.role;
       const profileCollection = req.app.get('profileCollection');
-      this.log.debug(`Attempting to update profile ${req.body._id} for user ${username}`);
-      // Ensure that this is our profile
-      const profile = await profileCollection.findByUsername(username);
-      if (profile) {
-        if (profile._id == req.body._id) {
+      if (role === 'admin') {
+        if (req.body._id) {
+          this.log.debug(`Attempting to update profile ${req.body._id} as admin`);
           const updated = await profileCollection.update(req.body);
           updated.password = undefined;
           res.send(updated);
         } else {
-          res.status(403).json({ error: { message: 'Access to this profile is forbidden' } });
+          this.log.debug(`Attempting to add new profile ${req.body.username} as admin`);
+          const newProfile = await profileCollection.create(req.body);
+          newProfile.password = undefined;
+          res.send(newProfile);
         }
       } else {
-        this.log.warn(`Failed to update profile, profile for ${username} not found`);
-        res.status(404).json({ error: { message: 'Failed to update profile' } });
+        this.log.debug(`Attempting to update profile ${req.body._id} for user ${username} as member`);
+        // Ensure that this is our profile
+        const profile = await profileCollection.findByUsername(username);
+        if (profile) {
+          if (profile._id == req.body._id) {
+            // Make sure they can not change role. Would be tragic!
+            req.body.role = 'member';
+            const updated = await profileCollection.update(req.body);
+            updated.password = undefined;
+            res.send(updated);
+          } else {
+            res.status(403).json({ error: { message: 'Access to this profile is forbidden' } });
+          }
+        } else {
+          this.log.warn(`Failed to update profile, profile for ${username} not found`);
+          res.status(404).json({ error: { message: 'Failed to update profile' } });
+        }
       }
     }
   }
