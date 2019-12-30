@@ -106,7 +106,7 @@ describe('ProfileCollection', () => {
   });
 
   it('should find with query', async () => {
-    const res = await profileCollection.find({ username: profiles[0].username });
+    const res = await profileCollection.find({ username: 'USER1' });
     expect(res.length).to.equal(1);
     expect(res[0].username).to.equal(profiles[0].username);
   });

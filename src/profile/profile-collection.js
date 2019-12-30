@@ -30,9 +30,17 @@ class ProfileCollection {
   async find(query, options) {
     query = query || { };
     options = options || { };
-    this.log.debug('Attempt to find profiles with query %o and options %o', query, options);
+    const q = {
+    };
+    Object.keys(query).forEach(k => {
+      q[k] = {
+        $regex: query[k],
+        $options: 'i'
+      };
+    });
+    this.log.debug('Attempt to find profiles with query %o and options %o', q, options);
     await this.database.getConnection();
-    const res = await this.model.find(query, null, options).exec();
+    const res = await this.model.find(q, null, options).exec();
     return res;
   }
 
