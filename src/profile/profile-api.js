@@ -28,13 +28,15 @@ class ProfileApi {
       'count',
       'find',
       'get',
-      'save'
+      'save',
+      'delete'
     ]);
 
     this.router.get('/profile', checkJwt({ tokenFactory, roles: ['admin'] }), this.find);
     this.router.get('/profile/count', checkJwt({ tokenFactory, roles: ['admin'] }), this.count);
     this.router.get('/profile/:id', checkJwt({ tokenFactory, roles: ['admin', 'member'] }), this.get);
     this.router.post('/profile', checkProfile, checkJwt({ tokenFactory, roles: ['admin', 'member'] }), this.save);
+    this.router.delete('/profile/:id', checkJwt({ tokenFactory, roles: ['admin', 'member'] }), this.delete);
   }
 
   async count(req, res) {
@@ -74,6 +76,32 @@ class ProfileApi {
         res.send(p);
       } else {
         res.status(403).json({ error: { message: 'Access to this profile is forbidden' } });
+      }
+    }
+  }
+
+  async delete(req, res) {
+    const id = req.params.id;
+    const username = req.user;
+    const role = req.role;
+    const profileCollection = req.app.get('profileCollection');
+    if (role === 'member') {
+      const profile = await profileCollection.findByUsernameAndId(username, id);
+      if (profile) {
+        // This should never fail
+        const deleted = await profileCollection.remove(id);
+        res.send(deleted);
+      } else {
+        res.status(403).json({ error: { message: 'Access to this profile is forbidden' } });
+      }
+    } else {
+      this.log.debug(`Attempting to delete profile ${id} as admin`);
+      const deleted = await profileCollection.remove(id);
+      if (deleted) {
+        res.send(deleted);
+      } else {
+        this.log.warn(`Failed to delete profile ${id}`);
+        res.status(404).json({ error: { message: 'Failed to delete profile' } });
       }
     }
   }

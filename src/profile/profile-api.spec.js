@@ -325,4 +325,45 @@ describe('ProfileApi', () => {
     expect(res.body.role).to.equal('admin');
   });
 
+  it('should fail to delete due to no authorization header', async () => {
+    const res = await request(app)
+            .delete(`/api/profile/${newProfile._id}`);
+    expect(res.statusCode).to.equal(401);
+    expect(res.body.error.message).to.equal('No authorization header');
+  });
+
+  it('should fail to delete as admin', async() => {
+    const id = new ObjectID();
+    const res = await request(app)
+            .delete(`/api/profile/${id}`)
+            .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.statusCode).to.equal(404);
+    expect(res.body.error.message).to.equal('Failed to delete profile');
+  });
+
+  it('should delete as admin', async () => {
+    const res = await request(app)
+            .delete(`/api/profile/${newProfile._id}`)
+            .set('Authorization', `Bearer ${adminToken}`);
+    expect(res.statusCode).to.equal(200);
+    expect(res.body.username).to.equal('newuser');
+  });
+
+  it('should fail to delete as user due to forbidden', async() => {
+    const id = new ObjectID();
+    const res = await request(app)
+            .delete(`/api/profile/${id}`)
+            .set('Authorization', `Bearer ${userToken}`);
+    expect(res.statusCode).to.equal(403);
+    expect(res.body.error.message).to.equal('Access to this profile is forbidden');
+  });
+
+  it('should delete as user', async() => {
+    const res = await request(app)
+            .delete(`/api/profile/${profile1._id}`)
+            .set('Authorization', `Bearer ${userToken}`);
+    expect(res.statusCode).to.equal(200);
+    expect(res.body.username).to.equal(profile1.username);
+  });
+
 });
